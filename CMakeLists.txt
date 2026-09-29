@@ -27,13 +27,6 @@ if(CONFIG_ZMK_RUNTIME_INPUT_PROCESSOR)
 
         list(APPEND CMAKE_MODULE_PATH ${ZEPHYR_BASE}/modules/nanopb)
         include(nanopb)
-
-        if(DEFINED NANOPB_GENERATE_CPP_APPEND_PATH)
-            set(_rip_saved_append_path "${NANOPB_GENERATE_CPP_APPEND_PATH}")
-            set(_rip_had_append_path TRUE)
-        else()
-            set(_rip_had_append_path FALSE)
-        endif()
         set(NANOPB_GENERATE_CPP_APPEND_PATH TRUE)
         set(NANOPB_GENERATE_CPP_STANDALONE OFF)
 
@@ -42,14 +35,6 @@ if(CONFIG_ZMK_RUNTIME_INPUT_PROCESSOR)
         file(GLOB_RECURSE PROTO_FILES ${CMAKE_CURRENT_SOURCE_DIR}/proto/*.proto)
 
         nanopb_generate_cpp(proto_srcs proto_hdrs RELPATH ${CMAKE_CURRENT_SOURCE_DIR} ${PROTO_FILES})
-
-        if(_rip_had_append_path)
-            set(NANOPB_GENERATE_CPP_APPEND_PATH "${_rip_saved_append_path}")
-        else()
-            unset(NANOPB_GENERATE_CPP_APPEND_PATH)
-        endif()
-        unset(_rip_saved_append_path)
-        unset(_rip_had_append_path)
         target_include_directories(${ZEPHYR_CURRENT_LIBRARY} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
         target_sources(${ZEPHYR_CURRENT_LIBRARY} PRIVATE ${proto_srcs} ${proto_hdrs})
 
